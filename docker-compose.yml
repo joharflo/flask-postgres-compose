@@ -1,0 +1,47 @@
+services:
+  # Service for the PostgreSQL database
+  db:
+    # Name of the container for the database service
+    container_name: ${SERVER_NAME_DB}
+    # Build configuration for the database service
+    build:
+      # Context directory for the Dockerfile
+      context: ./db
+    # Always restart the container unless explicitly stopped
+    restart: always
+    # Map port 5432 of the host to port 5432 of the container
+    ports:
+      - "5432:5432"
+    # Load environment variables from the .env file
+    env_file:
+      - .env
+    # Attach this service to the specified network
+    networks:
+      - flask_postgresql_net
+  
+  # Service for the Flask application
+  app:
+    # Name of the container for the application service
+    container_name: ${SERVER_NAME_APP}
+    # Build configuration for the application service
+    build:
+      # Context directory for the Dockerfile
+      context: ./app
+    # Always restart the container unless explicitly stopped
+    restart: always
+    # Map port 5000 of the host to port 5000 of the container
+    ports:
+      - "5000:5000"
+    # Load environment variables from the .env file
+    env_file:
+      - .env    
+    # Attach this service to the specified network
+    networks:
+      - flask_postgresql_net
+
+# Network configuration
+networks:
+  # Define a custom network for the services
+  flask_postgresql_net:
+    # Use the bridge network driver
+    driver: bridge
